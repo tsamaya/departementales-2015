@@ -1,0 +1,31 @@
+{
+  "name": "departementales-2015",
+  "version": "1.0.0",
+  "description": "DataViz sur les élections départementatles 2015",
+  "main": "gruntfile.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsamaya/departementales-2015.git"
+  },
+  "keywords": [
+    "dataviz",
+    "d3",
+    "leafletjs"
+  ],
+  "author": {
+    "name": "tsamaya",
+    "homepage": "https://github.com/tsamaya"
+  },
+  "license": "APACHE",
+  "bugs": {
+    "url": "https://github.com/tsamaya/departementales-2015/issues"
+  },
+  "homepage": "https://github.com/tsamaya/departementales-2015",
+  "devDependencies": {
+    "shp": "0.0.1",
+    "topojson": "^1.6.18"
+  }
+}

@@ -1,0 +1,443 @@
+var map, featureList, departementsSearch = [], cantonsSearch = [], museumSearch = [];
+
+$(window).resize(function() {
+  sizeLayerControl();
+});
+
+$(document).on("click", ".feature-row", function(e) {
+  $(document).off("mouseout", ".feature-row", clearHighlight);
+  sidebarClick(parseInt($(this).attr("id"), 10));
+});
+
+$(document).on("mouseover", ".feature-row", function(e) {
+  var layer = cantons.getLayer($(this).attr('id'));
+  highlight.clearLayers().addLayer(L.multiPolygon(layer.feature.geometry.coordinates,highlightStyle));
+  //highlight.clearLayers().addLayer(layer,highlightStyle);
+  // clearHighlight();
+  // highlight.addLayer(layer,highlightStyle);
+});
+
+$(document).on("mouseout", ".feature-row", clearHighlight);
+
+$("#about-btn").click(function() {
+  $("#aboutModal").modal("show");
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#full-extent-btn").click(function() {
+  map.fitBounds(departements.getBounds());
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#legend-btn").click(function() {
+  $("#legendModal").modal("show");
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#list-btn").click(function() {
+  $('#sidebar').toggle();
+  map.invalidateSize();
+  return false;
+});
+
+$("#nav-btn").click(function() {
+  $(".navbar-collapse").collapse("toggle");
+  return false;
+});
+
+$("#sidebar-toggle-btn").click(function() {
+  $("#sidebar").toggle();
+  map.invalidateSize();
+  return false;
+});
+
+$("#sidebar-hide-btn").click(function() {
+  $('#sidebar').hide();
+  map.invalidateSize();
+});
+
+function sizeLayerControl() {
+  $(".leaflet-control-layers").css("max-height", $("#map").height() - 50);
+}
+
+function clearHighlight() {
+  highlight.clearLayers();
+}
+
+function sidebarClick(id) {
+  var layer = cantons.getLayer(id);
+  map.fitBounds(layer.getBounds());
+  layer.fire("click");
+  /* Hide sidebar and go to the map on small screens */
+  if (document.body.clientWidth <= 767) {
+    $("#sidebar").hide();
+    map.invalidateSize();
+  }
+}
+
+function syncSidebar() {
+  /* Empty sidebar features */
+  $("#feature-list tbody").empty();
+  /* Loop through theaters layer and add only features which are in the map bounds */
+  cantons.eachLayer(function (layer) {
+    if (map.hasLayer(cantons)) {
+      if (map.getBounds().intersects(layer.getBounds())) {
+        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.NOM_CHF + ' (0'+layer.feature.properties.CODE_DEPT+layer.feature.properties.CODE_CANT+'/' +layer.feature.properties.NOM_DEPT + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      }
+    }
+  });
+  /* Update list.js featureList */
+  featureList = new List("features", {
+    valueNames: ["feature-name"]
+  });
+  featureList.sort("feature-name", {
+    order: "asc"
+  });
+}
+
+/* Basemap Layers */
+var darkGray = L.tileLayer('http://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 16,
+  attribution : 'Esri, HERE, DeLorme, MapmyIndia, © OpenStreetMap contributors, and the GIS user community'
+});
+var gray = L.tileLayer('http://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 16,
+  attribution : 'Esri, HERE, DeLorme, MapmyIndia, © OpenStreetMap contributors, and the GIS user community'
+});
+var topo = L.tileLayer('http://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 19,
+  attribution : 'Esri, HERE, DeLorme, TomTom, Intermap, increment P Corp., GEBCO, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), swisstopo, MapmyIndia, © OpenStreetMap contributors, and the GIS User Community '
+});
+
+
+/* Overlay Layers */
+//var highlight = L.geoJson(null);
+var highlight = L.layerGroup(null);
+var highlightStyle = {
+  stroke: true,
+  color: "#d35400",
+  weight: 3,
+  fill: true,
+  fillColor: "#2980b9",
+  fillOpacity: 1
+  
+};
+
+var departements
+ = L.geoJson(null, {
+  style: function (feature) {
+    return {
+      color: "black",
+      fill: false,
+      opacity: 1,
+      clickable: false
+    };
+  },
+  onEachFeature: function (feature, layer) {
+    departementsSearch.push({
+      name: layer.feature.properties.NOM_DEPT,
+      code: layer.feature.properties.CODE_DEPT,
+      region: layer.feature.properties.NOM_REGION,
+      source: "Departements",
+      id: L.stamp(layer),
+      bounds: layer.getBounds()      
+    });
+  }
+});
+$.getJSON("data/departements.geojson", function (data) {
+  departements.addData(data);
+});
+
+var cantons
+ = L.geoJson(null, {
+  style: function (feature) {
+    return {
+    weight: 2,
+    opacity: 0.4,
+    color: '#9b59b6',
+    dashArray: '3',
+    fill: true,
+    fillColor: '#9b59b6',
+    fillOpacity: 0.2,
+      clickable: true
+    };
+  },
+  onEachFeature: function (feature, layer) {
+    if( layer.feature.properties.NOM_CHF == null) {
+      layer.feature.properties.NOM_CHF = '~';
+    }
+    cantonsSearch.push({
+      name: layer.feature.properties.NOM_CHF,
+      dept: layer.feature.properties.NOM_DEPT,
+      source: "Cantons",
+      id: L.stamp(layer),
+      bounds: layer.getBounds()
+    });
+  }
+});
+$.getJSON("data/cantons.geojson", function (data) {
+  cantons.addData(data);
+});
+
+map = L.map("map", {
+  zoom: 6,
+  center: [46.6, 2.3],
+  layers: [darkGray, departements, cantons, highlight],
+  //zoomControl: false,
+  attributionControl: false
+});
+
+/* Layer control listeners */
+map.on("overlayadd", function(e) {
+  if (e.layer === cantons) {
+    syncSidebar();
+  }
+});
+
+map.on("overlayremove", function(e) {
+  if (e.layer === cantons) {
+    syncSidebar();
+  }
+});
+
+/* Filter sidebar feature list to only show features in current map bounds */
+map.on("moveend", function (e) {
+  syncSidebar();
+});
+
+/* Clear feature highlight when map is clicked */
+map.on("click", function(e) {
+  highlight.clearLayers();
+});
+
+/* Attribution control */
+function updateAttribution(e) {
+  $.each(map._layers, function(index, layer) {
+    if (layer.getAttribution) {
+      $("#attribution").html((layer.getAttribution()));
+    }
+  });
+}
+map.on("layeradd", updateAttribution);
+map.on("layerremove", updateAttribution);
+
+var attributionControl = L.control({
+  position: "bottomright"
+});
+attributionControl.onAdd = function (map) {
+  var div = L.DomUtil.create("div", "leaflet-control-attribution");
+  div.innerHTML = "<span class='hidden-xs'>créé by <a href='https://github.com/tsamaya'>Arnaud Ferrand</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
+  return div;
+};
+map.addControl(attributionControl);
+
+// var zoomControl = L.control.zoom({
+// //  position: "bottomright"
+// }).addTo(map);
+
+/* GPS enabled geolocation control set to follow the user's location */
+var locateControl = L.control.locate({
+  position: "topleft",
+  drawCircle: true,
+  follow: true,
+  setView: true,
+  keepCurrentZoomLevel: true,
+  markerStyle: {
+    weight: 1,
+    opacity: 0.8,
+    fillOpacity: 0.8
+  },
+  circleStyle: {
+    weight: 1,
+    clickable: false
+  },
+  icon: "icon-direction",
+  metric: false,
+  strings: {
+    title: "Ma position",
+    popup: "Vous êtes à une distance de {distance} {unit}",
+    outsideMapBoundsMsg: "Vous êtes en dehors de la carte"
+  },
+  locateOptions: {
+    maxZoom: 18,
+    watch: true,
+    enableHighAccuracy: true,
+    maximumAge: 10000,
+    timeout: 10000
+  }
+}).addTo(map);
+
+/* Larger screens get expanded layer control and visible sidebar */
+if (document.body.clientWidth <= 767) {
+  var isCollapsed = true;
+} else {
+  var isCollapsed = false;
+}
+
+var baseLayers = {
+  "Dark Gray" : darkGray,
+  "Gray" : gray,
+  "Topo" : topo
+};
+
+var groupedOverlays = {
+  "Références": {
+    "<img src='assets/img/dept.png' width='29' height='28'>&nbsp;Départements": departements,
+    "<img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons": cantons
+  }
+};
+
+var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
+  collapsed: isCollapsed
+}).addTo(map);
+
+
+/* Highlight search box text on click */
+$("#searchbox").click(function () {
+  $(this).select();
+});
+
+/* Prevent hitting enter from refreshing the page */
+$("#searchbox").keypress(function (e) {
+  if (e.which == 13) {
+    e.preventDefault();
+  }
+});
+
+$("#featureModal").on("hidden.bs.modal", function (e) {
+  $(document).on("mouseout", ".feature-row", clearHighlight);
+});
+
+/* Typeahead search functionality */
+$(document).one("ajaxStop", function () {
+  $("#loading").hide();
+  sizeLayerControl();
+  /* Fit map to departements bounds */
+  map.fitBounds(departements.getBounds());
+  featureList = new List("features", {valueNames: ["feature-name"]});
+  featureList.sort("feature-name", {order:"asc"});
+
+  var departementsBH = new Bloodhound({
+    name: "Departements",
+    datumTokenizer: function (d) {
+      return Bloodhound.tokenizers.whitespace(d.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: departementsSearch,
+    limit: 10
+  });
+
+  var cantonsBH = new Bloodhound({
+    name: "Cantons",
+    datumTokenizer: function (d) {
+      return Bloodhound.tokenizers.whitespace(d.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: cantonsSearch,
+    limit: 10
+  });
+
+  var geonamesBH = new Bloodhound({
+    name: "GeoNames",
+    datumTokenizer: function (d) {
+      return Bloodhound.tokenizers.whitespace(d.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url: "http://api.geonames.org/searchJSON?username=bootleaf&featureClass=P&maxRows=5&countryCode=US&name_startsWith=%QUERY",
+      filter: function (data) {
+        return $.map(data.geonames, function (result) {
+          return {
+            name: result.name + ", " + result.adminCode1,
+            lat: result.lat,
+            lng: result.lng,
+            source: "GeoNames"
+          };
+        });
+      },
+      ajax: {
+        beforeSend: function (jqXhr, settings) {
+          settings.url += "&east=" + map.getBounds().getEast() + "&west=" + map.getBounds().getWest() + "&north=" + map.getBounds().getNorth() + "&south=" + map.getBounds().getSouth();
+          $("#searchicon").removeClass("fa-search").addClass("fa-refresh fa-spin");
+        },
+        complete: function (jqXHR, status) {
+          $('#searchicon').removeClass("fa-refresh fa-spin").addClass("fa-search");
+        }
+      }
+    },
+    limit: 10
+  });
+  departementsBH.initialize();
+  cantonsBH.initialize();
+  geonamesBH.initialize();
+
+  /* instantiate the typeahead UI */
+  $("#searchbox").typeahead({
+    minLength: 3,
+    highlight: true,
+    hint: false
+  }, {
+    name: "Departements",
+    displayKey: "name",
+    source: departementsBH.ttAdapter(),
+    templates: {
+      header: "<h4 class='typeahead-header'><img src='assets/img/dept.png' width='29' height='28'>&nbsp;Départements</h4>",
+      suggestion: Handlebars.compile(["{{name}}&nbsp;{{code}}<br><small>{{region}}</small>"].join(""))
+    }
+  }, {
+    name: "Cantons",
+    displayKey: "name",
+    source: cantonsBH.ttAdapter(),
+    templates: {
+      header: "<h4 class='typeahead-header'><img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons</h4>",
+      suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{dept}}</small>"].join(""))
+    }
+  }, {
+    name: "GeoNames",
+    displayKey: "name",
+    source: geonamesBH.ttAdapter(),
+    templates: {
+      header: "<h4 class='typeahead-header'><img src='assets/img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
+    }
+  }).on("typeahead:selected", function (obj, datum) {
+    if (datum.source === "Departements") {
+      map.fitBounds(datum.bounds);
+    }
+    if (datum.source === "Cantons") {
+      map.fitBounds(datum.bounds);
+      if (!map.hasLayer(cantons)) {
+        map.addLayer(cantons);
+      }
+      if (map._layers[datum.id]) {
+        map._layers[datum.id].fire("click");
+      }
+    }
+    if (datum.source === "GeoNames") {
+      map.setView([datum.lat, datum.lng], 14);
+    }
+    if ($(".navbar-collapse").height() > 50) {
+      $(".navbar-collapse").collapse("hide");
+    }
+  }).on("typeahead:opened", function () {
+    $(".navbar-collapse.in").css("max-height", $(document).height() - $(".navbar-header").height());
+    $(".navbar-collapse.in").css("height", $(document).height() - $(".navbar-header").height());
+  }).on("typeahead:closed", function () {
+    $(".navbar-collapse.in").css("max-height", "");
+    $(".navbar-collapse.in").css("height", "");
+  });
+  $(".twitter-typeahead").css("position", "static");
+  $(".twitter-typeahead").css("display", "block");
+});
+
+// Leaflet patch to make layer control scrollable on touch browsers
+var container = $(".leaflet-control-layers")[0];
+if (!L.Browser.touch) {
+  L.DomEvent
+  .disableClickPropagation(container)
+  .disableScrollPropagation(container);
+} else {
+  L.DomEvent.disableClickPropagation(container);
+}
