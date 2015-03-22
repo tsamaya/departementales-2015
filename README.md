@@ -1,4 +1,4 @@
-# DataViz Election Départementales 2015
+# DataViz Départementales 2015
 under construction
 
 ## TODO
