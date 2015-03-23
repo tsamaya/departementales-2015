@@ -85,7 +85,8 @@ function syncSidebar() {
   cantons.eachLayer(function (layer) {
     if (map.hasLayer(cantons)) {
       if (map.getBounds().intersects(layer.getBounds())) {
-        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.NOM_CHF + ' (0'+layer.feature.properties.CODE_DEPT+layer.feature.properties.CODE_CANT+'/' +layer.feature.properties.NOM_DEPT + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+        //$("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.NOM_CHF + ' (0'+layer.feature.properties.CODE_DEPT+layer.feature.properties.CODE_CANT+'/' +layer.feature.properties.NOM_DEPT + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.nom + ' ('+layer.feature.properties.ref+' / ' +layer.feature.properties.bureau + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       }
     }
   });
@@ -126,8 +127,7 @@ var highlightStyle = {
   
 };
 
-var departements
- = L.geoJson(null, {
+var departements = L.geoJson(null, {
   style: function (feature) {
     return {
       color: "black",
@@ -147,38 +147,39 @@ var departements
     });
   }
 });
-$.getJSON("data/departements.geojson", function (data) {
+$.getJSON("data/departements_simplify.geojson", function (data) {
   departements.addData(data);
 });
 
-var cantons
- = L.geoJson(null, {
+var cantons = L.geoJson(null, {
   style: function (feature) {
     return {
     weight: 2,
-    opacity: 0.4,
+    opacity: .5,
     color: '#9b59b6',
     dashArray: '3',
     fill: true,
     fillColor: '#9b59b6',
-    fillOpacity: 0.2,
-      clickable: true
+    fillOpacity: 0.1,
+    clickable: true
     };
   },
   onEachFeature: function (feature, layer) {
-    if( layer.feature.properties.NOM_CHF == null) {
-      layer.feature.properties.NOM_CHF = '~';
-    }
+    // if( layer.feature.properties.NOM_CHF == null) {
+    //   layer.feature.properties.NOM_CHF = '~';
+    // }
     cantonsSearch.push({
-      name: layer.feature.properties.NOM_CHF,
-      dept: layer.feature.properties.NOM_DEPT,
+      // name: layer.feature.properties.NOM_CHF,
+      // dept: layer.feature.properties.NOM_DEPT,
+      name: layer.feature.properties.nom,
+      dept: layer.feature.properties.dep,
       source: "Cantons",
       id: L.stamp(layer),
       bounds: layer.getBounds()
     });
   }
 });
-$.getJSON("data/cantons.geojson", function (data) {
+$.getJSON("data/cantons_2015_simplify.geojson", function (data) {
   cantons.addData(data);
 });
 
@@ -393,7 +394,7 @@ $(document).one("ajaxStop", function () {
     source: cantonsBH.ttAdapter(),
     templates: {
       header: "<h4 class='typeahead-header'><img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons</h4>",
-      suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{dept}}</small>"].join(""))
+      suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{dep}}</small>"].join(""))
     }
   }, {
     name: "GeoNames",

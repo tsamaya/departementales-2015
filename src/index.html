@@ -51,8 +51,8 @@
             <li class="dropdown">
                 <a class="dropdown-toggle" id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Télécharger <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="data/cantons.geojson" download="cantons.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Cantons</a></li>
-                  <li><a href="data/departements.geojson" download="departements.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Départements</a></li>
+                  <li><a href="data/cantons_2015_simplify.geojson" download="cantons_2015_simplify.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Cantons</a></li>
+                  <li><a href="data/departements_simplify.geojson" download="departements_simplify.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Départements</a></li>
                 </ul>
             </li>
             <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;A propos</a></li>
@@ -136,7 +136,9 @@
             </ul>
             <div class="tab-content" id="aboutTabsContent">
               <div class="tab-pane fade active in" id="about">
-                <p>Une applications pour vsualis les résulats des elections départementale 2015. Techniquement cette application utilise <a href="http://getbootstrap.com/">Bootstrap 3</a>, <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, et <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>. </p>
+                <p>Une applications pour vsualiser les résulats des élections départementales 2015. La carte est centrée sur la France métropolotaines, mais les cantons des DOM participants à ces élections sont bien présent, une recherche est possible dans la zone de recherche en haut à droite ou bien à l'aide des outils de zoom de la cartes. Le filtre (haut à gauche) permet de filtrer la liste comprenant les cantons affichés sur la carte (ce n'est pas une recherche globale !).<br>
+                Techniquement cette application utilise <a href="http://getbootstrap.com/">Bootstrap 3</a>, <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, et <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>. </p>
+                <!--
                 <div class="panel panel-primary">
                   <div class="panel-heading">Fonctionnalités (en)</div>
                   <ul class="list-group">
@@ -148,6 +150,7 @@
                     <li class="list-group-item">Marker icons included in grouped layer control via the <a href="https://github.com/ismyrnow/Leaflet.groupedlayercontrol" target="_blank">grouped layer control plugin</a></li>
                   </ul>
                 </div>
+                -->
                 <p>Cette application a été conçue à partir d'un exemple Open source, disponible sur <a href="https://github.com/bmcbride/bootleaf" target="_blank">GitHub</a>.</p>
               </div>
               <div id="disclaimer" class="tab-pane fade text-danger">
@@ -186,7 +189,7 @@
                 </form>
               </div>
               <div class="tab-pane fade" id="cantons-tab">
-                <p>Les cantons sont issus des données de l'<a href="http://professionnels.ign.fr/geofla" target="_blank">IGN GEOFLA</a></p>
+                <p>Les cantons électoraux de 2015 sont issus des données de <a href="https://www.data.gouv.fr/fr/datasets/contours-osm-des-cantons-electoraux-departementaux-2015/" target="_blank">data.gouv.fr</a></p>
               </div>
               <div class="tab-pane fade" id="departements-tab">
                 <p>Les départements sont issus des données de l'<a href="http://professionnels.ign.fr/geofla" target="_blank">IGN GEOFLA</a></p>
