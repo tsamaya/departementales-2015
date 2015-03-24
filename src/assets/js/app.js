@@ -32,13 +32,13 @@ $("#full-extent-btn").click(function() {
 });
 
 $("#gwada-extent-btn").click(function() {
-  map.setView([16.11179, -61.42044],10);
+  map.setView([16.11179, -61.42044],9);
   $(".navbar-collapse.in").collapse("hide");
   return false;
 });
 
 $("#reu-extent-btn").click(function() {
-  map.setView([-21.1255, 55.52078],10);
+  map.setView([-21.1255, 55.52078],9);
   $(".navbar-collapse.in").collapse("hide");
   return false;
 });
@@ -104,18 +104,24 @@ function syncSidebar() {
   cantons.eachLayer(function (layer) {
     if (map.hasLayer(cantons)) {
       if (map.getBounds().intersects(layer.getBounds())) {
-        //$("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.NOM_CHF + ' (0'+layer.feature.properties.CODE_DEPT+layer.feature.properties.CODE_CANT+'/' +layer.feature.properties.NOM_DEPT + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
-        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.nom + ' ('+layer.feature.properties.ref+' / ' +layer.feature.properties.bureau + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+        $("#feature-list tbody").append(featureRowCanton(layer));
       }
     }
   });
+
   /* Update list.js featureList */
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ ListFuzzySearch() ]
   });
   featureList.sort("feature-name", {
     order: "asc"
   });
+}
+
+function featureRowCanton(layer) {
+  var content = '<tr class="feature-row" id="' + L.stamp(layer) + '"><td style="vertical-align: middle;"><i class="fa fa-bar-chart"></i></td><td class="feature-name">' + layer.feature.properties.nom + ' ('+layer.feature.properties.ref+' / ' +layer.feature.properties.bureau + ')</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>';
+  return content;
 }
 
 /* Basemap Layers */
@@ -174,7 +180,7 @@ var cantons = L.geoJson(null, {
   style: function (feature) {
     return {
     weight: 2,
-    opacity: .5,
+    opacity: 0.5,
     color: '#9b59b6',
     dashArray: '3',
     fill: true,
@@ -184,23 +190,48 @@ var cantons = L.geoJson(null, {
     };
   },
   onEachFeature: function (feature, layer) {
-    // if( layer.feature.properties.NOM_CHF == null) {
-    //   layer.feature.properties.NOM_CHF = '~';
-    // }
-    cantonsSearch.push({
-      // name: layer.feature.properties.NOM_CHF,
-      // dept: layer.feature.properties.NOM_DEPT,
-      name: layer.feature.properties.nom,
-      dept: layer.feature.properties.dep,
-      source: "Cantons",
-      id: L.stamp(layer),
-      bounds: layer.getBounds()
-    });
+    if (feature.properties) {
+      // fill sidebar
+      //$("#feature-list tbody").append(featureRowCanton(layer));
+      // array for ListJS
+      cantonsSearch.push({
+        name: layer.feature.properties.nom,
+        dept: layer.feature.properties.dep,
+        source: "Cantons",
+        id: L.stamp(layer),
+        bounds: layer.getBounds()
+      });
+      // click
+      if( feature.properties.wikipedia === null ) {
+        // cleanup
+        feature.properties.wikipedia = '';
+      }
+      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Nom</th><td>" + feature.properties.nom + "</td></tr>" + "<tr><th>Référence</th><td>" + feature.properties.ref + "</td></tr>" + "<tr><th>Bureau</th><td>" + feature.properties.bureau + "</td></tr>" + "<tr><th>Wikipedia</th><td><a class='url-break' href='" + encodeURI(feature.properties.wikipedia) + "' target='_blank'>" + feature.properties.wikipedia + "</a></td></tr>" + "<tr><th>jorf</th><td>" + feature.properties.jorf + "</td></tr>" + "<table>";
+      layer.on({
+        click: function (e) {
+          $("#feature-title").html(feature.properties.nom);
+          $("#feature-info").html(content);
+          $("#featureModal").modal("show");
+          //highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
+        }
+      });
+
+    }
   }
 });
 $.getJSON("data/cantons_2015_simplify.geojson", function (data) {
   cantons.addData(data);
 });
+
+d3.tsv("data/nuances.tsv", function(error, data) {
+//  var data2 = data;
+});
+
+
+d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
+  var data2 = data;
+});
+
 
 map = L.map("map", {
   zoom: 6,
