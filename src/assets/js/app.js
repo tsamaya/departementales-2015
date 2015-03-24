@@ -31,6 +31,25 @@ $("#full-extent-btn").click(function() {
   return false;
 });
 
+$("#gwada-extent-btn").click(function() {
+  map.setView([16.11179, -61.42044],10);
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#reu-extent-btn").click(function() {
+  map.setView([-21.1255, 55.52078],10);
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#may-extent-btn").click(function() {
+  map.setView([-12.83323, 45.15656],10);
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+
 $("#legend-btn").click(function() {
   $("#legendModal").modal("show");
   $(".navbar-collapse.in").collapse("hide");
@@ -124,7 +143,7 @@ var highlightStyle = {
   fill: true,
   fillColor: "#2980b9",
   fillOpacity: 1
-  
+
 };
 
 var departements = L.geoJson(null, {
@@ -143,7 +162,7 @@ var departements = L.geoJson(null, {
       region: layer.feature.properties.NOM_REGION,
       source: "Departements",
       id: L.stamp(layer),
-      bounds: layer.getBounds()      
+      bounds: layer.getBounds()
     });
   }
 });
@@ -318,6 +337,7 @@ $(document).one("ajaxStop", function () {
   sizeLayerControl();
   /* Fit map to departements bounds */
   map.fitBounds(departements.getBounds());
+
   featureList = new List("features", {valueNames: ["feature-name"]});
   featureList.sort("feature-name", {order:"asc"});
 
