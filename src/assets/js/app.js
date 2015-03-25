@@ -149,7 +149,6 @@ var highlightStyle = {
   fill: true,
   fillColor: "#2980b9",
   fillOpacity: 1
-
 };
 
 var departements = L.geoJson(null, {
@@ -212,7 +211,22 @@ var cantons = L.geoJson(null, {
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#featureModal").modal("show");
-          //highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
+          var polygon = L.polygon(layer.feature.geometry.coordinates, {
+            clickable: false,
+            color: "#0033ff",
+            dashArray: null,
+            fill: true,
+            fillColor: "##f1c40f",
+            fillOpacity: 0.7,
+            lineCap: null,
+            lineJoin: null,
+            noClip: false,
+            opacity: 0.5,
+            smoothFactor: 1,
+            stroke: true,
+            weight: 5
+          });
+          highlight.clearLayers().addLayer(polygon);
         }
       });
 
@@ -230,6 +244,7 @@ d3.tsv("data/nuances.tsv", function(error, data) {
 
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
   var data2 = data;
+  //console.log(nombre.toLocaleString('fr-FR', { minimumIntegerDigits: 3 }));
 });
 
 

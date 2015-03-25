@@ -15,13 +15,13 @@ input[type="radio"], input[type="checkbox"] {
   max-width: 100%;
   float: left;
   -webkit-transition: all 0.25s ease-out;
-    -moz-transition: all 0.25s ease-out;
-    transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
 }
 #map {
   width: auto;
   height: 100%;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 #loading {
   position: absolute;
@@ -37,7 +37,7 @@ input[type="radio"], input[type="checkbox"] {
   border: none;
   border-radius: 0px;
   -webkit-box-shadow: none;
-    box-shadow: none;
+  box-shadow: none;
 }
 #sidebar-hide-btn {
   margin-top: -2px;
@@ -147,7 +147,7 @@ input[type="radio"], input[type="checkbox"] {
     font-size: 18px;
   }
 }
-@media (max-width: 767px){
+@media (max-width: 767px) {
   #sidebar {
     display: none;
   }
@@ -155,13 +155,14 @@ input[type="radio"], input[type="checkbox"] {
     word-break: break-all;
     word-break: break-word;
     -webkit-hyphens: auto;
-      hyphens: auto;
+    hyphens: auto;
   }
-  .dropdown-menu a i{
+  .dropdown-menu a i {
     color: #FFFFFF;
   }
 }
 /* Print Handling */
+
 @media print {
   .navbar {
     display: none !important;
