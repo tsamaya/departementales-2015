@@ -140,8 +140,8 @@ var topo = L.tileLayer('http://server.arcgisonline.com/arcgis/rest/services/Worl
 
 
 /* Overlay Layers */
-//var highlight = L.geoJson(null);
-var highlight = L.layerGroup(null);
+var highlight = L.geoJson(null);
+//var highlight = L.layerGroup(null);
 var highlightStyle = {
   stroke: true,
   color: "#d35400",
