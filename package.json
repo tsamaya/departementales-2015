@@ -1,6 +1,6 @@
 {
   "name": "departementales-2015",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "DataViz sur les élections départementatles 2015",
   "main": "gruntfile.js",
   "scripts": {
