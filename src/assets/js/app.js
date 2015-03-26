@@ -138,7 +138,6 @@ var topo = L.tileLayer('http://server.arcgisonline.com/arcgis/rest/services/Worl
   attribution : 'Esri, HERE, DeLorme, TomTom, Intermap, increment P Corp., GEBCO, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), swisstopo, MapmyIndia, © OpenStreetMap contributors, and the GIS User Community '
 });
 
-
 /* Overlay Layers */
 var highlight = L.geoJson(null);
 //var highlight = L.layerGroup(null);
@@ -208,15 +207,13 @@ var cantons = L.geoJson(null, {
       var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Nom</th><td>" + feature.properties.nom + "</td></tr>" + "<tr><th>Référence</th><td>" + feature.properties.ref + "</td></tr>" + "<tr><th>Bureau</th><td>" + feature.properties.bureau + "</td></tr>" + "<tr><th>Wikipedia</th><td><a class='url-break' href='" + encodeURI(feature.properties.wikipedia) + "' target='_blank'>" + feature.properties.wikipedia + "</a></td></tr>" + "<tr><th>jorf</th><td>" + feature.properties.jorf + "</td></tr>" + "<table>";
       layer.on({
         click: function (e) {
-          $("#feature-title").html(feature.properties.nom);
-          $("#feature-info").html(content);
-          $("#featureModal").modal("show");
+
           var polygon = L.polygon(layer.feature.geometry.coordinates, {
             clickable: false,
             color: "#0033ff",
             dashArray: null,
             fill: true,
-            fillColor: "##f1c40f",
+            fillColor: "#f1c40f",
             fillOpacity: 0.7,
             lineCap: null,
             lineJoin: null,
@@ -227,6 +224,50 @@ var cantons = L.geoJson(null, {
             weight: 5
           });
           highlight.clearLayers().addLayer(polygon);
+
+          var ref = feature.properties.ref;
+          var flag = false;
+          var datum ;
+          for(var i=0; i<firstRoundResults.length&&!flag; i++) {
+            var codeDep = firstRoundResults[i]["Code du département"];
+            var codeCanton = firstRoundResults[i]["Code du canton"];
+            var code = parseInt(codeDep).toLocaleString('fr-FR', { minimumIntegerDigits: 3 }) + '-' + parseInt(codeCanton).toLocaleString('fr-FR', { minimumIntegerDigits: 2 });
+            if( ref === code ) {
+              flag = true;
+              datum = firstRoundResults[i];
+            }
+          }
+          var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>" ;
+
+
+          if( flag ) {
+            var stop = false;
+            for (var i = 0; i < 11; i++) {
+              if (datum['Nuance' + i] === '') {
+                stop = true;
+              } else {
+                contentFirstRound += "<tr><td>"+ datum['Nuance' + i] + "</td><td> " + datum['Binôme' + i] + "</td><td align='right'>" + datum['% Voix/Exp' + i] + "%</</td></tr>" ;
+
+                console.log(datum['Nuance' + i]);
+                console.log(datum['Binôme' + i]);
+                console.log(datum['Voix' + i]);
+                console.log(datum['Sièges' + i]);
+                console.log(datum['% Voix/Ins' + i]);
+                console.log(datum['% Voix/Exp' + i]);
+              }
+            }
+            contentFirstRound += "</table><br/>";
+
+            var contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
+
+            contentFirstRound += contentResult ;
+          }
+
+
+          $("#feature-title").html(feature.properties.nom);
+          $("#feature-info").html(content);
+          $("#firstRound-info").html(contentFirstRound);
+          $("#featureModal").modal("show");
         }
       });
 
@@ -237,14 +278,15 @@ $.getJSON("data/cantons_2015_simplify.geojson", function (data) {
   cantons.addData(data);
 });
 
+var nuances, firstRoundResults, secondRoundResults;
+
 d3.tsv("data/nuances.tsv", function(error, data) {
 //  var data2 = data;
 });
 
 
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
-  var data2 = data;
-  //console.log(nombre.toLocaleString('fr-FR', { minimumIntegerDigits: 3 }));
+  firstRoundResults = data;
 });
 
 
@@ -287,6 +329,7 @@ function updateAttribution(e) {
     }
   });
 }
+
 map.on("layeradd", updateAttribution);
 map.on("layerremove", updateAttribution);
 

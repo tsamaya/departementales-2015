@@ -2,7 +2,7 @@
 under construction
 
 ## TODO
-* add results
+* ~~add results~~
 * add graph
 * ~~simplify cantons geometries and add DOM !~~
 
@@ -16,3 +16,6 @@ under construction
 ### Outils
 * [shp2json](https://www.npmjs.com/package/shp2json) : pour exporter les shp en geojson
 * [MapShaper](http://www.mapshaper.org/) : pour simplifier les geometries
+
+## Credits
+UI template from [Bryan McBride](http://bryanmcbride.com) [Bootleaf](https://github.com/bmcbride/bootleaf)
