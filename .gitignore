@@ -75,3 +75,5 @@ $RECYCLE.BIN/
 *.lnk
 
 tmp
+dist
+data

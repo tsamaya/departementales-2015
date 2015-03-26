@@ -1,6 +1,6 @@
 {
   "name": "departementales-2015",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "DataViz sur les élections départementatles 2015",
   "main": "gruntfile.js",
   "scripts": {
@@ -24,6 +24,18 @@
     "url": "https://github.com/tsamaya/departementales-2015/issues"
   },
   "homepage": "https://github.com/tsamaya/departementales-2015",
-  "devDependencies": {
-  }
+  "dependencies": {
+    "connect-livereload": "^0.5.3",
+    "grunt": "^0.4.5",
+    "grunt-build-gh-pages": "^1.0.3",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-connect": "^0.9.0",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-jshint": "^0.11.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-gh-pages": "^0.10.0",
+    "grunt-open": "^0.2.3",
+    "grunt-shell": "^1.1.2"
+  },
+  "devDependencies": {}
 }

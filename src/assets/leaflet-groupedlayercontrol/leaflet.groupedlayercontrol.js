@@ -3,7 +3,7 @@
 // A layer control which provides for layer groupings.
 // Author: Ishmael Smyrnow
 L.Control.GroupedLayers = L.Control.extend({
-  
+
   options: {
     collapsed: true,
     position: 'topright',
@@ -25,7 +25,7 @@ L.Control.GroupedLayers = L.Control.extend({
     }
 
     for (i in groupedOverlays) {
-      for (var j in groupedOverlays[i]) {
+      for (j in groupedOverlays[i]) {
         this._addLayer(groupedOverlays[i][j], j, i, true);
       }
     }
