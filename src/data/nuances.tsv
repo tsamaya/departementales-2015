@@ -1,11 +1,17 @@
 Nuance	Libellé	Couleur
 BC-EXG	Extrême gauche	#93151f
+BC-COM	PCF	#c8462d
 BC-FG	FG/PG/PCF	#c8462d
 BC-SOC	PS/Union de la gauche	#d98e84
+BC-PG	PG	#e7bcbf
+BC-UG	Divers gauche	#e7bcbf
 BC-DVG	Divers gauche/PRG	#e7bcbf
+BC-RDG	Divers gauche	#e7bcbf
 BC-VEC	EELV	#b4c35a
 BC-DIV	Divers	#d0b3ee
 BC-MDM	Modem	#e3a94b
+BC-UD	UD	#797fb5
+BC-DLF	DLF	#797fb5
 BC-UDI	UDI/Union du centre	#797fb5
 BC-UMP	UMP/Union de la droite	#797fb5
 BC-DVD	Divers droite	#a4b0d5

@@ -246,7 +246,8 @@ var cantons = L.geoJson(null, {
               if (datum['Nuance' + i] === '') {
                 stop = true;
               } else {
-                contentFirstRound += "<tr><td>"+ datum['Nuance' + i] + "</td><td> " + datum['Binôme' + i] + "</td><td align='right'>" + datum['% Voix/Exp' + i] + "%</</td></tr>" ;
+                var parti = getParti(datum['Nuance' + i]);
+                contentFirstRound += "<tr><td><div class='legende "+datum['Nuance' + i]+"'></div><div>&nbsp;"+ parti + "</div></td><td> " + datum['Binôme' + i] + "</td><td align='right'>" + datum['% Voix/Exp' + i] + "%</</td></tr>" ;
 
                 console.log(datum['Nuance' + i]);
                 console.log(datum['Binôme' + i]);
@@ -281,9 +282,19 @@ $.getJSON("data/cantons_2015_simplify.geojson", function (data) {
 var nuances, firstRoundResults, secondRoundResults;
 
 d3.tsv("data/nuances.tsv", function(error, data) {
-//  var data2 = data;
+  nuances = data;
 });
 
+function getParti(nuance) {
+  var stop = false;
+  var parti = "non disponible";
+  for(var i=0; i<nuances.length&&!stop;i++) {
+    if( nuances[i]["Nuance"] === nuance) {
+      parti = nuances[i]["Libellé"];
+    }
+  }
+  return parti;
+}
 
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
   firstRoundResults = data;

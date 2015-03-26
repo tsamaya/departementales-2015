@@ -162,12 +162,13 @@
                   </ul>
                 </div>
                 -->
-              <p>Cette application a été conçue à partir d'un modèle Open source, par disponible sur <a href="https://github.com/bmcbride/bootleaf" target="_blank">GitHub</a>.</p>
+              <p>Cette application a été conçue à partir d'un modèle Open source, par Bryan McBride disponible sur <a href="https://github.com/bmcbride/bootleaf" target="_blank">GitHub</a>.</p>
             </div>
             <div id="disclaimer" class="tab-pane fade text-danger">
               <p>Les données fournies avec cette application sont purement informelles.</p>
               <p></p>
             </div>
+            <!--
             <div class="tab-pane fade" id="contact">
               <form id="contact-form">
                 <div class="well well-sm">
@@ -199,6 +200,7 @@
                 </div>
               </form>
             </div>
+          -->
             <div class="tab-pane fade" id="cantons-tab">
               <p>Les cantons électoraux de 2015 sont issus des données de <a href="https://www.data.gouv.fr/fr/datasets/contours-osm-des-cantons-electoraux-departementaux-2015/" target="_blank">data.gouv.fr</a></p>
             </div>
@@ -230,7 +232,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title">Map Legend</h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" id="legend-info">
           <p>Map Legend goes here...</p>
         </div>
         <div class="modal-footer">
@@ -243,40 +245,8 @@
   </div>
   <!-- /.modal -->
 
-  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Login</h4>
-        </div>
-        <div class="modal-body">
-          <form id="contact-form">
-            <fieldset>
-              <div class="form-group">
-                <label for="name">Username:</label>
-                <input type="text" class="form-control" id="username">
-              </div>
-              <div class="form-group">
-                <label for="email">Password:</label>
-                <input type="password" class="form-control" id="password">
-              </div>
-            </fieldset>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary" data-dismiss="modal">Login</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-
   <div class="modal fade" id="featureModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -288,7 +258,7 @@
             <li><a href="#secondRound-info" data-toggle="tab"><i class="fa fa-bar-chart"></i>&nbsp;2ème tour</a></li>
             <li><a href="#feature-info" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;Informations</a></li>
           </ul>
-          <div class="tab-content" id="aboutTabsContent">
+          <div class="tab-content" id="featureInfoTabsContent">
             <div class="tab-pane fade active in" id="firstRound-info"></div>
             <div class="tab-pane fade" id="secondRound-info">Rendez vous lundi 30 mars !</div>
             <div class="tab-pane fade" id="feature-info"></div>

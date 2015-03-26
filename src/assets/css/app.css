@@ -142,6 +142,73 @@ input[type="radio"], input[type="checkbox"] {
   line-height: 34px;
   text-align: center;
 }
+.legende {
+  background-color: #dcdcdc;
+  border-collapse: separate;
+  display: block;
+  float: left;
+  font-family: Verdana;
+  font-size: 14px;
+  font-weight: 900;
+  height: 14px;
+  line-height: 16.7999992370605px;
+  /*margin-right: 21px;*/
+  position: relative;
+  width: 14px;
+}
+
+.BC-EXG {
+  background-color: #93151f;
+}
+.BC-FG {
+  background-color: #c8462d;
+}
+.BC-COM {
+  background-color: #c8462d;
+}
+.BC-SOC {
+  background-color: #d98e84;
+}
+.BC-PG {
+  background-color: #e7bcbf;
+}
+.BC-DVG {
+  background-color: #e7bcbf;
+}
+.BC-UG {
+  background-color: #e7bcbf;
+}
+.BC-VEC {
+  background-color: #b4c35a;
+}
+.BC-DIV {
+  background-color: #d0b3ee;
+}
+.BC-MDM {
+  background-color: #e3a94b;
+}
+.BC-UD {
+  background-color: #797fb5;
+}
+.BC-DLF {
+  background-color: #797fb5;
+}
+.BC-UDI {
+  background-color: #797fb5;
+}
+.BC-UMP {
+  background-color: #797fb5;
+}
+.BC-DVD {
+  background-color: #a4b0d5;
+}
+.BC-FN {
+  background-color: #930079;
+}
+.BC-EXD {
+  background-color: #572675;
+}
+
 @media (max-width: 992px) {
   .navbar .navbar-brand {
     font-size: 18px;
