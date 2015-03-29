@@ -505,8 +505,8 @@ var baseLayers = {
 
 var groupedOverlays = {
   "Références": {
-    "<img src='assets/img/dept.png' width='29' height='28'>&nbsp;Départements": departements,
-    "<img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons": cantons
+    "<img src='img/dept.png' width='29' height='28'>&nbsp;Départements": departements,
+    "<img src='img/canton.png' width='26' height='28'>&nbsp;Cantons": cantons
   }
 };
 
@@ -609,7 +609,7 @@ $(document).one("ajaxStop", function() {
     displayKey: "name",
     source: departementsBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/dept.png' width='29' height='28'>&nbsp;Départements</h4>",
+      header: "<h4 class='typeahead-header'><img src='img/dept.png' width='29' height='28'>&nbsp;Départements</h4>",
       suggestion: Handlebars.compile(["{{name}}&nbsp;{{code}}<br><small>{{region}}</small>"].join(""))
     }
   }, {
@@ -617,7 +617,7 @@ $(document).one("ajaxStop", function() {
     displayKey: "name",
     source: cantonsBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons</h4>",
+      header: "<h4 class='typeahead-header'><img src='img/canton.png' width='26' height='28'>&nbsp;Cantons</h4>",
       suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{dep}}</small>"].join(""))
     }
   }, {
@@ -625,7 +625,7 @@ $(document).one("ajaxStop", function() {
     displayKey: "name",
     source: geonamesBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
+      header: "<h4 class='typeahead-header'><img src='img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
     }
   }).on("typeahead:selected", function(obj, datum) {
     if (datum.source === "Departements") {
