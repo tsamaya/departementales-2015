@@ -208,7 +208,6 @@ input[type="radio"], input[type="checkbox"] {
 .BC-EXD {
   background-color: #572675;
 }
-
 @media (max-width: 992px) {
   .navbar .navbar-brand {
     font-size: 18px;

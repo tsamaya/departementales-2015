@@ -256,7 +256,7 @@ function updateColor(feature) {
 function d3DD(id, data) {
   var w = 300, //width
     h = 300, //height
-    r = Math.min(w, h) / 2; //radius
+    r = 100;// Math.min(w, h) / 2; //radius
     //color = d3.scale.category20c(); //builtin range of colors
 
   var vis = d3.select(id)
@@ -265,7 +265,7 @@ function d3DD(id, data) {
     .attr("width", w) //set the width and height of our visualization (these will be attributes of the <svg> tag
     .attr("height", h)
     .append("g") //make a group to hold our pie chart
-    .attr("transform", "translate(" + r + "," + r + ")"); //move the center of the pie chart from 0, 0 to radius, radius
+    .attr("transform", "translate(" + 1.5*r + "," + 1.5*r + ")"); //move the center of the pie chart from 0, 0 to radius, radius
 
   var arc = d3.svg.arc() //this will create <path> elements for us using arc data
     .outerRadius(r);
@@ -290,8 +290,8 @@ function d3DD(id, data) {
   arcs.append("text") //add a label to each slice
     .attr("transform", function(d) { //set the label's origin to the center of the arc
       //we have to make sure to set these before calling arc.centroid
-      d.innerRadius = 0;
-      d.outerRadius = r;
+      d.innerRadius = r+25;
+      d.outerRadius = r+30;
       return "translate(" + arc.centroid(d) + ")"; //this gives us a pair of coordinates like [50, 50]
     })
     .attr("text-anchor", "middle") //center the text on it's origin
