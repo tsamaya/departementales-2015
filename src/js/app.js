@@ -261,7 +261,7 @@ function d3DD(id, data) {
 
   var vis = d3.select(id)
     .append("svg") //create the SVG element inside the <body>
-    .data(data) //associate our data with the document
+    .data([data]) //associate our data with the document
     .attr("width", w) //set the width and height of our visualization (these will be attributes of the <svg> tag
     .attr("height", h)
     .append("g") //make a group to hold our pie chart
@@ -349,7 +349,7 @@ var cantons = L.geoJson(null, {
             stroke: true,
             weight: 5
           });
-          highlight.clearLayers().addLayer(polygon); // why it does not work ?
+          highlight.clearLayers().addLayer(polygon); // FIXME why it does not work ?
 
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
@@ -389,7 +389,7 @@ var cantons = L.geoJson(null, {
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#firstRound-info").html(contentFirstRound);
-          d3DD('pieFirstRound', pieData);
+          d3DD('#pieFirstRound', pieData);
 
           $("#featureModal").modal("show");
         }
