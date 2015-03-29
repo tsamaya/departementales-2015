@@ -227,7 +227,7 @@ $.getJSON("data/departements_simplify.geojson", function(data) {
   departements.addData(data);
 });
 
-function updateColor(feature){
+function updateColor(feature) {
   var couleur = '#9b59b6';
   if (firstRoundResults) {
     var datum = getMatchingResult(feature.properties.ref);
@@ -239,18 +239,22 @@ function updateColor(feature){
         if (datum['Nuance' + a] === '') {
           stop = true;
         } else {
-          if( datum['Voix' + a] > maxValue ) {
+          if (datum['Voix' + a] > maxValue) {
             maxValue = datum['Voix' + a];
             index = a;
           }
         }
       }
-      if( index !== -1) {
-        couleur = getCouleur('Nuance'+index);
+      if (index !== -1) {
+        couleur = getCouleur('Nuance' + index);
       }
     }
   }
   return couleur;
+}
+
+function d3DD(id, data) {
+
 }
 
 var cantons = L.geoJson(null, {
@@ -302,11 +306,11 @@ var cantons = L.geoJson(null, {
             stroke: true,
             weight: 5
           });
-          highlight.clearLayers().addLayer(polygon);
+          highlight.clearLayers().addLayer(polygon); // why it does not work ?
 
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
-
+          var pieData = [];
           var datum = getMatchingResult(ref);
           if (datum) {
             var stop = false;
@@ -315,27 +319,35 @@ var cantons = L.geoJson(null, {
                 stop = true;
               } else {
                 var parti = getParti(datum['Nuance' + a]);
+                var voix = datum['Voix' + a];
                 contentFirstRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
-
-                console.log(datum['Nuance' + a]);
-                console.log(datum['Binôme' + a]);
-                console.log(datum['Voix' + a]);
-                console.log(datum['Sièges' + a]);
-                console.log(datum['% Voix/Ins' + a]);
-                console.log(datum['% Voix/Exp' + a]);
+                var row = {};
+                row.parti = parti;
+                row.voix = voix;
+                pieData.push(row);
+                console.log('Nuance:' + datum['Nuance' + a]);
+                console.log('Binôme:' + datum['Binôme' + a]);
+                console.log('Voix:' + voix);
+                console.log('Sièges:' + datum['Sièges' + a]);
+                console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
+                console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
               }
             }
-            contentFirstRound += "</table><br/>";
+            contentFirstRound += "</table><br/><div id=\"pieFisrtRound\"></div>";
 
             var contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
 
             contentFirstRound += contentResult;
+          } else {
+            console.log('canton non trouvé ' + ref);
           }
 
 
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#firstRound-info").html(contentFirstRound);
+          d3DD('pieFisrtRound', pieData);
+
           $("#featureModal").modal("show");
         }
       });
