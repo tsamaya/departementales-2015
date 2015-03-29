@@ -13,7 +13,7 @@ module.exports = function(grunt) {
       options: {
         jshintrc: true
       },
-      all: ['src/**/*.js']
+      all: ['src/js/**/*.js']
     },
 
     connect: {
