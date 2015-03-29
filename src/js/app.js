@@ -254,10 +254,10 @@ function updateColor(feature) {
 }
 
 function d3DD(id, data) {
-  var w = 200, //width
-    h = 200, //height
-    r = Math.min(w, h) / 2, //radius
-    color = d3.scale.category20c(); //builtin range of colors
+  var w = 300, //width
+    h = 300, //height
+    r = Math.min(w, h) / 2; //radius
+    //color = d3.scale.category20c(); //builtin range of colors
 
   var vis = d3.select(id)
     .append("svg") //create the SVG element inside the <body>
@@ -283,7 +283,7 @@ function d3DD(id, data) {
 
   arcs.append("svg:path")
     .attr("fill", function(d, i) {
-      return color(i);
+      return d.data.color; //color(i);
     }) //set the color for each slice to be chosen from the color function defined above
     .attr("d", arc); //this creates the actual SVG path using the associated data (pie) with the arc drawing function
 
@@ -362,22 +362,22 @@ var cantons = L.geoJson(null, {
                 stop = true;
               } else {
                 var parti = getParti(datum['Nuance' + a]);
-                var voix = datum['Voix' + a];
+
                 contentFirstRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
                 var row = {};
                 row.label = parti;
-                row.value = parseInt(voix);
-                row.color = getCouleur('Nuance' + a);
+                row.value = datum['% Voix/Exp' + a];
+                row.color = getCouleur(datum['Nuance' + a]);
                 pieData.push(row);
                 console.log('Nuance:' + datum['Nuance' + a]);
                 console.log('Binôme:' + datum['Binôme' + a]);
-                console.log('Voix:' + voix);
+                console.log('Voix:' + datum['Voix' + a]);
                 console.log('Sièges:' + datum['Sièges' + a]);
                 console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
                 console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
               }
             }
-            contentFirstRound += "</table><br/><div id=\"pieFirstRound\"></div>";
+            contentFirstRound += "</table><br/><div id=\"pieFirstRound\" align=center></div>";
 
             var contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
 
