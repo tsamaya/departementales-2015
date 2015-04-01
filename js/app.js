@@ -227,7 +227,7 @@ $.getJSON("data/departements_simplify.geojson", function(data) {
   departements.addData(data);
 });
 
-function updateColor(feature){
+function updateColor(feature) {
   var couleur = '#9b59b6';
   if (firstRoundResults) {
     var datum = getMatchingResult(feature.properties.ref);
@@ -239,18 +239,65 @@ function updateColor(feature){
         if (datum['Nuance' + a] === '') {
           stop = true;
         } else {
-          if( datum['Voix' + a] > maxValue ) {
+          if (datum['Voix' + a] > maxValue) {
             maxValue = datum['Voix' + a];
             index = a;
           }
         }
       }
-      if( index !== -1) {
-        couleur = getCouleur('Nuance'+index);
+      if (index !== -1) {
+        couleur = getCouleur('Nuance' + index);
       }
     }
   }
   return couleur;
+}
+
+function d3DD(id, data) {
+  var w = 300, //width
+    h = 300, //height
+    r = 100;// Math.min(w, h) / 2; //radius
+    //color = d3.scale.category20c(); //builtin range of colors
+
+  var vis = d3.select(id)
+    .append("svg") //create the SVG element inside the <body>
+    .data([data]) //associate our data with the document
+    .attr("width", w) //set the width and height of our visualization (these will be attributes of the <svg> tag
+    .attr("height", h)
+    .append("g") //make a group to hold our pie chart
+    .attr("transform", "translate(" + 1.5*r + "," + 1.5*r + ")"); //move the center of the pie chart from 0, 0 to radius, radius
+
+  var arc = d3.svg.arc() //this will create <path> elements for us using arc data
+    .outerRadius(r);
+
+  var pie = d3.layout.pie() //this will create arc data for us given a list of values
+    .value(function(d) {
+      return d.value;
+    }); //we must tell it out to access the value of each element in our data array
+
+  var arcs = vis.selectAll("g.slice") //this selects all <g> elements with class slice (there aren't any yet)
+    .data(pie) //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
+    .enter() //this will create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array
+    .append("g") //create a group to hold each slice (we will have a <path> and a <text> element associated with each slice)
+    .attr("class", "slice"); //allow us to style things in the slices (like text)
+
+  arcs.append("svg:path")
+    .attr("fill", function(d, i) {
+      return d.data.color; //color(i);
+    }) //set the color for each slice to be chosen from the color function defined above
+    .attr("d", arc); //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+
+  arcs.append("text") //add a label to each slice
+    .attr("transform", function(d) { //set the label's origin to the center of the arc
+      //we have to make sure to set these before calling arc.centroid
+      d.innerRadius = r+25;
+      d.outerRadius = r+30;
+      return "translate(" + arc.centroid(d) + ")"; //this gives us a pair of coordinates like [50, 50]
+    })
+    .attr("text-anchor", "middle") //center the text on it's origin
+    .text(function(d, i) {
+      return data[i].label;
+    }); //get the label from our original data array}
 }
 
 var cantons = L.geoJson(null, {
@@ -302,11 +349,11 @@ var cantons = L.geoJson(null, {
             stroke: true,
             weight: 5
           });
-          highlight.clearLayers().addLayer(polygon);
+          highlight.clearLayers().addLayer(polygon); // FIXME why it does not work ?
 
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
-
+          var pieData = [];
           var datum = getMatchingResult(ref);
           if (datum) {
             var stop = false;
@@ -315,27 +362,35 @@ var cantons = L.geoJson(null, {
                 stop = true;
               } else {
                 var parti = getParti(datum['Nuance' + a]);
-                contentFirstRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
 
-                console.log(datum['Nuance' + a]);
-                console.log(datum['Binôme' + a]);
-                console.log(datum['Voix' + a]);
-                console.log(datum['Sièges' + a]);
-                console.log(datum['% Voix/Ins' + a]);
-                console.log(datum['% Voix/Exp' + a]);
+                contentFirstRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
+                var row = {};
+                row.label = parti;
+                row.value = datum['% Voix/Exp' + a];
+                row.color = getCouleur(datum['Nuance' + a]);
+                pieData.push(row);
+                console.log('Nuance:' + datum['Nuance' + a]);
+                console.log('Binôme:' + datum['Binôme' + a]);
+                console.log('Voix:' + datum['Voix' + a]);
+                console.log('Sièges:' + datum['Sièges' + a]);
+                console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
+                console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
               }
             }
-            contentFirstRound += "</table><br/>";
+            contentFirstRound += "</table><br/><div id=\"pieFirstRound\" align=center></div>";
 
             var contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
 
             contentFirstRound += contentResult;
+          } else {
+            console.log('canton non trouvé ' + ref);
           }
-
 
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#firstRound-info").html(contentFirstRound);
+          d3DD('#pieFirstRound', pieData);
+
           $("#featureModal").modal("show");
         }
       });
@@ -436,13 +491,12 @@ var locateControl = L.control.locate({
   }
 }).addTo(map);
 
+var isCollapsed = false;
+
 /* Larger screens get expanded layer control and visible sidebar */
 if (document.body.clientWidth <= 767) {
-  var isCollapsed = true;
-} else {
-  var isCollapsed = false;
+  isCollapsed = true;
 }
-
 var baseLayers = {
   "Dark Gray": darkGray,
   "Gray": gray,
@@ -451,8 +505,8 @@ var baseLayers = {
 
 var groupedOverlays = {
   "Références": {
-    "<img src='assets/img/dept.png' width='29' height='28'>&nbsp;Départements": departements,
-    "<img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons": cantons
+    "<img src='img/dept.png' width='29' height='28'>&nbsp;Départements": departements,
+    "<img src='img/canton.png' width='26' height='28'>&nbsp;Cantons": cantons
   }
 };
 
@@ -555,7 +609,7 @@ $(document).one("ajaxStop", function() {
     displayKey: "name",
     source: departementsBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/dept.png' width='29' height='28'>&nbsp;Départements</h4>",
+      header: "<h4 class='typeahead-header'><img src='img/dept.png' width='29' height='28'>&nbsp;Départements</h4>",
       suggestion: Handlebars.compile(["{{name}}&nbsp;{{code}}<br><small>{{region}}</small>"].join(""))
     }
   }, {
@@ -563,7 +617,7 @@ $(document).one("ajaxStop", function() {
     displayKey: "name",
     source: cantonsBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/canton.png' width='26' height='28'>&nbsp;Cantons</h4>",
+      header: "<h4 class='typeahead-header'><img src='img/canton.png' width='26' height='28'>&nbsp;Cantons</h4>",
       suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{dep}}</small>"].join(""))
     }
   }, {
@@ -571,7 +625,7 @@ $(document).one("ajaxStop", function() {
     displayKey: "name",
     source: geonamesBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
+      header: "<h4 class='typeahead-header'><img src='img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
     }
   }).on("typeahead:selected", function(obj, datum) {
     if (datum.source === "Departements") {
