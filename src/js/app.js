@@ -539,7 +539,8 @@ $(document).one("ajaxStop", function() {
   map.fitBounds(departements.getBounds());
 
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ListFuzzySearch()]
   });
   featureList.sort("feature-name", {
     order: "asc"
