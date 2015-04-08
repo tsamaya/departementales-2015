@@ -11,8 +11,8 @@ $(document).on("click", ".feature-row", function(e) {
 });
 
 $(document).on("mouseover", ".feature-row", function(e) {
-  var layer = cantons.getLayer($(this).attr('id'));
-  highlight.clearLayers().addLayer(L.multiPolygon(layer.feature.geometry.coordinates, highlightStyle));
+  //var layer = cantons.getLayer($(this).attr('id'));
+  //highlight.clearLayers().addLayer(L.multiPolygon(layer.feature.geometry.coordinates, highlightStyle));
   //highlight.clearLayers().addLayer(layer,highlightStyle);
   // clearHighlight();
   // highlight.addLayer(layer,highlightStyle);
@@ -179,10 +179,10 @@ function getCouleur(nuance) {
   return couleur;
 }
 
-function getMatchingResult(ref) {
+function getMatchingResult(ref, tour) {
   var flag = false;
   var datum = null;
-  var results = firstRoundResults;
+  var results = tour;
   for (var i = 0; i < results.length && !flag; i++) {
     var codeDep = results[i]["Code du département"];
     var codeCanton = results[i]["Code du canton"];
@@ -201,6 +201,10 @@ function getMatchingResult(ref) {
 
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
   firstRoundResults = data;
+});
+
+d3.csv("data/Departementales_2015_Resultats_Tour2_par_canton.csv", function(error, data) {
+  secondRoundResults = data;
 });
 
 var departements = L.geoJson(null, {
@@ -227,7 +231,7 @@ $.getJSON("data/departements_simplify.geojson", function(data) {
   departements.addData(data);
 });
 
-function updateColor(feature) {
+function updateColor(feature, tour) {
   var couleur = '#9b59b6';
   if (firstRoundResults) {
     var datum = getMatchingResult(feature.properties.ref);
@@ -354,7 +358,7 @@ var cantons = L.geoJson(null, {
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
           var pieData = [];
-          var datum = getMatchingResult(ref);
+          var datum = getMatchingResult(ref, firstRoundResults);
           if (datum) {
             var stop = false;
             for (var a = 0; a < 11; a++) {
@@ -405,8 +409,7 @@ $.getJSON("data/cantons_2015_simplify.geojson", function(data) {
 map = L.map("map", {
   zoom: 6,
   center: [46.6, 2.3],
-  layers: [darkGray, departements, cantons, highlight],
-  //zoomControl: false,
+  layers: [topo, departements, cantons, highlight],
   attributionControl: false
 });
 
