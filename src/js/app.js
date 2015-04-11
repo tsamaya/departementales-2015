@@ -199,6 +199,14 @@ function getMatchingResult(ref, tour) {
   return datum;
 }
 
+function pad(code) {
+  var ret = '';
+  for (var i=code.length; i<3; i++) {
+    ret=ret+'0';
+  }
+  return ret+code;
+}
+
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
   firstRoundResults = data;
 });
@@ -357,22 +365,24 @@ var cantons = L.geoJson(null, {
 
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
-          var pieData = [];
+          var contentSecondRound = "<table class='table table-striped table-bordered table-condensed'>";
+          var pieDataFirst= [], pieDataSecond = [];
+          var dataum, stop, a, parti, row, contentResult;
           var datum = getMatchingResult(ref, firstRoundResults);
           if (datum) {
-            var stop = false;
-            for (var a = 0; a < 11; a++) {
+            stop = false;
+            for (a = 0; a < 11; a++) {
               if (datum['Nuance' + a] === '') {
                 stop = true;
               } else {
-                var parti = getParti(datum['Nuance' + a]);
+                parti = getParti(datum['Nuance' + a]);
 
                 contentFirstRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
-                var row = {};
+                row = {};
                 row.label = parti;
                 row.value = datum['% Voix/Exp' + a];
                 row.color = getCouleur(datum['Nuance' + a]);
-                pieData.push(row);
+                pieDataFirst.push(row);
                 console.log('Nuance:' + datum['Nuance' + a]);
                 console.log('Binôme:' + datum['Binôme' + a]);
                 console.log('Voix:' + datum['Voix' + a]);
@@ -383,17 +393,51 @@ var cantons = L.geoJson(null, {
             }
             contentFirstRound += "</table><br/><div id=\"pieFirstRound\" align=center></div>";
 
-            var contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
+            contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
 
             contentFirstRound += contentResult;
           } else {
-            console.log('canton non trouvé ' + ref);
+            console.log('canton non trouvé pour le premier tour' + ref);
           }
 
+          datum = getMatchingResult(ref, firstRoundResults);
+          if (datum) {
+            stop = false;
+            for (a = 0; a < 11; a++) {
+              if (datum['Nuance' + a] === '') {
+                stop = true;
+              } else {
+                parti = getParti(datum['Nuance' + a]);
+
+                contentSecondRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
+                row = {};
+                row.label = parti;
+                row.value = datum['% Voix/Exp' + a];
+                row.color = getCouleur(datum['Nuance' + a]);
+                pieDataSecond.push(row);
+                console.log('Nuance:' + datum['Nuance' + a]);
+                console.log('Binôme:' + datum['Binôme' + a]);
+                console.log('Voix:' + datum['Voix' + a]);
+                console.log('Sièges:' + datum['Sièges' + a]);
+                console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
+                console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
+              }
+            }
+            contentSecondRound += "</table><br/><div id=\"pieSecondRound\" align=center></div>";
+
+            contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
+
+            contentSecondRound += contentResult;
+          } else {
+            console.log('canton non trouvé pour le premier tour' + ref);
+          }
+          
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#firstRound-info").html(contentFirstRound);
-          d3DD('#pieFirstRound', pieData);
+          $("#secondRound-info").html(contentSecondRound);
+          d3DD('#pieFirstRound', pieDataFirst);
+          d3DD('#pieSecondRound', pieDataSecond);
 
           $("#featureModal").modal("show");
         }

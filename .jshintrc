@@ -89,6 +89,7 @@
       "Handlebars": false,
       "ListFuzzySearch": false,
       "d3": false,
-      "List": false
+      "List": false,
+      "require": false
   }
 }
