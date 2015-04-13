@@ -11,8 +11,8 @@ $(document).on("click", ".feature-row", function(e) {
 });
 
 $(document).on("mouseover", ".feature-row", function(e) {
-  var layer = cantons.getLayer($(this).attr('id'));
-  highlight.clearLayers().addLayer(L.multiPolygon(layer.feature.geometry.coordinates, highlightStyle));
+  //var layer = cantons.getLayer($(this).attr('id'));
+  //highlight.clearLayers().addLayer(L.multiPolygon(layer.feature.geometry.coordinates, highlightStyle));
   //highlight.clearLayers().addLayer(layer,highlightStyle);
   // clearHighlight();
   // highlight.addLayer(layer,highlightStyle);
@@ -179,10 +179,10 @@ function getCouleur(nuance) {
   return couleur;
 }
 
-function getMatchingResult(ref) {
+function getMatchingResult(ref, tour) {
   var flag = false;
   var datum = null;
-  var results = firstRoundResults;
+  var results = tour;
   for (var i = 0; i < results.length && !flag; i++) {
     var codeDep = results[i]["Code du département"];
     var codeCanton = results[i]["Code du canton"];
@@ -199,8 +199,20 @@ function getMatchingResult(ref) {
   return datum;
 }
 
+function pad(code) {
+  var ret = '';
+  for (var i=code.length; i<3; i++) {
+    ret=ret+'0';
+  }
+  return ret+code;
+}
+
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
   firstRoundResults = data;
+});
+
+d3.csv("data/Departementales_2015_Resultats_Tour2_par_canton.csv", function(error, data) {
+  secondRoundResults = data;
 });
 
 var departements = L.geoJson(null, {
@@ -227,7 +239,7 @@ $.getJSON("data/departements_simplify.geojson", function(data) {
   departements.addData(data);
 });
 
-function updateColor(feature) {
+function updateColor(feature, tour) {
   var couleur = '#9b59b6';
   if (firstRoundResults) {
     var datum = getMatchingResult(feature.properties.ref);
@@ -353,22 +365,61 @@ var cantons = L.geoJson(null, {
 
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
-          var pieData = [];
-          var datum = getMatchingResult(ref);
+          var contentSecondRound = "<table class='table table-striped table-bordered table-condensed'>";
+          var pieDataFirst= [], pieDataSecond = [];
+          var dataum, stop, a, parti, row, contentResult, eluPremierTour = false;
+          var datum = getMatchingResult(ref, firstRoundResults);
           if (datum) {
-            var stop = false;
-            for (var a = 0; a < 11; a++) {
+            stop = false;
+            for (a = 0; a < 11; a++) {
               if (datum['Nuance' + a] === '') {
                 stop = true;
               } else {
-                var parti = getParti(datum['Nuance' + a]);
+                parti = getParti(datum['Nuance' + a]);
 
                 contentFirstRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
-                var row = {};
+                row = {};
                 row.label = parti;
                 row.value = datum['% Voix/Exp' + a];
                 row.color = getCouleur(datum['Nuance' + a]);
-                pieData.push(row);
+                pieDataFirst.push(row);
+                console.log('Nuance:' + datum['Nuance' + a]);
+                console.log('Binôme:' + datum['Binôme' + a]);
+                console.log('Voix:' + datum['Voix' + a]);
+                console.log('Sièges:' + datum['Sièges' + a]);
+                console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
+                console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
+                if( datum['% Voix/Exp' + a] > 51){
+                  eluPremierTour = true;
+                }
+              }
+            }
+            contentFirstRound += "</table><br/><div id=\"pieFirstRound\" align=center></div>";
+
+            contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
+
+            contentFirstRound += contentResult;
+          } else {
+            console.log('canton non trouvé pour le premier tour ' + ref);
+          }
+          if( !eluPremierTour) {
+
+
+          datum = getMatchingResult(ref, secondRoundResults);
+          if (datum) {
+            stop = false;
+            for (a = 0; a < 3 && !stop; a++) {
+              if (datum['Nuance' + a] === '') {
+                stop = true;
+              } else {
+                parti = getParti(datum['Nuance' + a]);
+
+                contentSecondRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
+                row = {};
+                row.label = parti;
+                row.value = datum['% Voix/Exp' + a];
+                row.color = getCouleur(datum['Nuance' + a]);
+                pieDataSecond.push(row);
                 console.log('Nuance:' + datum['Nuance' + a]);
                 console.log('Binôme:' + datum['Binôme' + a]);
                 console.log('Voix:' + datum['Voix' + a]);
@@ -377,19 +428,23 @@ var cantons = L.geoJson(null, {
                 console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
               }
             }
-            contentFirstRound += "</table><br/><div id=\"pieFirstRound\" align=center></div>";
+            contentSecondRound += "</table><br/><div id=\"pieSecondRound\" align=center></div>";
 
-            var contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
+            contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
 
-            contentFirstRound += contentResult;
+            contentSecondRound += contentResult;
           } else {
-            console.log('canton non trouvé ' + ref);
+            console.log('canton non trouvé pour le second tour ' + ref);
           }
-
+          } else {
+            contentSecondRound = "Elus au premier tour";
+          }
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#firstRound-info").html(contentFirstRound);
-          d3DD('#pieFirstRound', pieData);
+          $("#secondRound-info").html(contentSecondRound);
+          d3DD('#pieFirstRound', pieDataFirst);
+          d3DD('#pieSecondRound', pieDataSecond);
 
           $("#featureModal").modal("show");
         }
@@ -405,8 +460,7 @@ $.getJSON("data/cantons_2015_simplify.geojson", function(data) {
 map = L.map("map", {
   zoom: 6,
   center: [46.6, 2.3],
-  layers: [darkGray, departements, cantons, highlight],
-  //zoomControl: false,
+  layers: [topo, departements, cantons, highlight],
   attributionControl: false
 });
 
@@ -539,7 +593,8 @@ $(document).one("ajaxStop", function() {
   map.fitBounds(departements.getBounds());
 
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ListFuzzySearch()]
   });
   featureList.sort("feature-name", {
     order: "asc"

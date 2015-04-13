@@ -45,9 +45,6 @@
               <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="gwada-extent-btn"><i class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Zoom sur la Guadeloupe</a></li>
               <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="reu-extent-btn"><i class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Zoom sur la Réunion</a></li>
               <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="may-extent-btn"><i class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Zoom sur Mayotte</a></li>
-              <!--<li class="divider hidden-xs"></li>
-              <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Show Legend</a></li>
-              <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn"><i class="fa fa-user"></i>&nbsp;&nbsp;Login</a></li>-->
             </ul>
           </li>
           <li class="dropdown">
@@ -56,6 +53,7 @@
               <li><a href="data/cantons_2015_simplify.geojson" download="cantons_2015_simplify.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Cantons</a></li>
               <li><a href="data/departements_simplify.geojson" download="departements_simplify.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Départements</a></li>
               <li><a href="data/Departementales_2015_Resultats_Tour1_par_canton.csv" download="Departementales_2015_Resultats_Tour1_par_canton.csv" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Résultat 1er tour</a></li>
+              <li><a href="data/Departementales_2015_Resultats_Tour2_par_canton.csv" download="Departementales_2015_Resultats_Tour2_par_canton.csv" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Résultat 2ème tour</a></li>
             </ul>
           </li>
           <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;A propos</a></li>
@@ -137,68 +135,22 @@
                 <li><a href="#cantons-tab" data-toggle="tab">Cantons</a></li>
                 <li><a href="#departements-tab" data-toggle="tab">Départements</a></li>
                 <li><a href="#meta-firstRound-tab" data-toggle="tab">Résultats du 1er tour</a></li>
-                <!--<li><a href="#meta-secondRound-tab" data-toggle="tab">Résultats du 2ème tour</a></li>-->
+                <li><a href="#meta-secondRound-tab" data-toggle="tab">Résultats du 2ème tour</a></li>
               </ul>
             </li>
           </ul>
           <div class="tab-content" id="aboutTabsContent">
             <div class="tab-pane fade active in" id="about">
               <p>Une applications pour vsualiser les résulats des élections départementales 2015. La carte est centrée sur la France métropolotaines, mais les cantons des DOM participants à ces élections sont bien présents, utiliser le menu Outils, ou une
-                recherche est possible dans la zone de recherche en haut à droite. Le filtre (haut à gauche) permet de filtrer la liste comprenant les cantons affichés sur la carte (ce n'est pas une recherche globale !).
-                <br> Techniquement cette application utilise <a href="http://getbootstrap.com/">Bootstrap 3</a>, <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, et <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>.
+                recherche est possible dans la zone de recherche en haut à droite. Le filtre (haut à gauche) permet de filtrer la liste comprenant les cantons affichés sur la carte (ce n'est pas une recherche globale !).<br />
+                <br /> Techniquement cette application utilise <a href="http://getbootstrap.com/">Bootstrap 3</a>, <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, <a href="http://www.listjs.com/">List.js</a> et <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>.
               </p>
-              <!--
-                <div class="panel panel-primary">
-                  <div class="panel-heading">Fonctionnalités (en)</div>
-                  <ul class="list-group">
-                    <li class="list-group-item">Fullscreen mobile-friendly map template with responsive navbar and modal placeholders</li>
-                    <li class="list-group-item">jQuery loading of external GeoJSON files</li>
-                    <li class="list-group-item">Logical multiple layer marker clustering via the <a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">leaflet marker cluster plugin</a></li>
-                    <li class="list-group-item">Elegant client-side multi-layer feature search with autocomplete using <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a></li>
-                    <li class="list-group-item">Responsive sidebar feature list synced with map bounds, which includes sorting and filtering via <a href="http://listjs.com/" target="_blank">list.js</a></li>
-                    <li class="list-group-item">Marker icons included in grouped layer control via the <a href="https://github.com/ismyrnow/Leaflet.groupedlayercontrol" target="_blank">grouped layer control plugin</a></li>
-                  </ul>
-                </div>
-                -->
               <p>Cette application a été conçue à partir d'un modèle Open source, disponible sur <a href="https://github.com/bmcbride/bootleaf" target="_blank">GitHub</a>, par Bryan McBride.</p>
             </div>
             <div id="disclaimer" class="tab-pane fade text-danger">
               <p>Les données fournies avec cette application sont purement informelles.</p>
               <p></p>
             </div>
-            <!--
-            <div class="tab-pane fade" id="contact">
-              <form id="contact-form">
-                <div class="well well-sm">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label for="first-name">First Name:</label>
-                        <input type="text" class="form-control" id="first-name">
-                      </div>
-                      <div class="form-group">
-                        <label for="last-name">Last Name:</label>
-                        <input type="text" class="form-control" id="last-email">
-                      </div>
-                      <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="text" class="form-control" id="email">
-                      </div>
-                    </div>
-                    <div class="col-md-8">
-                      <label for="message">Message:</label>
-                      <textarea class="form-control" rows="8" id="message"></textarea>
-                    </div>
-                    <div class="col-md-12">
-                      <p>
-                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Submit</button>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          -->
             <div class="tab-pane fade" id="cantons-tab">
               <p>Les cantons électoraux de 2015 sont issus des données de <a href="https://www.data.gouv.fr/fr/datasets/contours-osm-des-cantons-electoraux-departementaux-2015/" target="_blank">data.gouv.fr</a></p>
             </div>
@@ -212,26 +164,6 @@
               <p>Les résultat proviennent de <a href="https://www.data.gouv.fr/fr/datasets/elections-departementales-2015-resultats-tour-2/" target="_blank">data.gouv.fr</a></p>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-
-  <div class="modal fade" id="legendModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Map Legend</h4>
-        </div>
-        <div class="modal-body" id="legend-info">
-          <p>Map Legend goes here...</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
