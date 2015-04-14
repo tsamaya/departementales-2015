@@ -367,7 +367,7 @@ var cantons = L.geoJson(null, {
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
           var contentSecondRound = "<table class='table table-striped table-bordered table-condensed'>";
           var pieDataFirst= [], pieDataSecond = [];
-          var dataum, stop, a, parti, row, contentResult;
+          var dataum, stop, a, parti, row, contentResult, eluPremierTour = false;
           var datum = getMatchingResult(ref, firstRoundResults);
           if (datum) {
             stop = false;
@@ -389,6 +389,9 @@ var cantons = L.geoJson(null, {
                 console.log('Sièges:' + datum['Sièges' + a]);
                 console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
                 console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
+                if( datum['% Voix/Exp' + a] > 51){
+                  eluPremierTour = true;
+                }
               }
             }
             contentFirstRound += "</table><br/><div id=\"pieFirstRound\" align=center></div>";
@@ -397,13 +400,15 @@ var cantons = L.geoJson(null, {
 
             contentFirstRound += contentResult;
           } else {
-            console.log('canton non trouvé pour le premier tour' + ref);
+            console.log('canton non trouvé pour le premier tour ' + ref);
           }
+          if( !eluPremierTour) {
 
-          datum = getMatchingResult(ref, firstRoundResults);
+
+          datum = getMatchingResult(ref, secondRoundResults);
           if (datum) {
             stop = false;
-            for (a = 0; a < 11; a++) {
+            for (a = 0; a < 3 && !stop; a++) {
               if (datum['Nuance' + a] === '') {
                 stop = true;
               } else {
@@ -429,9 +434,11 @@ var cantons = L.geoJson(null, {
 
             contentSecondRound += contentResult;
           } else {
-            console.log('canton non trouvé pour le premier tour' + ref);
+            console.log('canton non trouvé pour le second tour ' + ref);
           }
-          
+          } else {
+            contentSecondRound = "Elus au premier tour";
+          }
           $("#feature-title").html(feature.properties.nom);
           $("#feature-info").html(content);
           $("#firstRound-info").html(contentFirstRound);
