@@ -186,11 +186,12 @@ function getMatchingResult(ref, tour) {
   for (var i = 0; i < results.length && !flag; i++) {
     var codeDep = results[i]["Code du département"];
     var codeCanton = results[i]["Code du canton"];
-    var code = parseInt(codeDep).toLocaleString('fr-FR', {
-      minimumIntegerDigits: 3
-    }) + '-' + parseInt(codeCanton).toLocaleString('fr-FR', {
-      minimumIntegerDigits: 2
-    });
+    var code = pad(codeDep, 3) + '-' + pad(codeCanton, 2);
+    // var code = parseInt(codeDep).toLocaleString('fr-FR', {
+    //   minimumIntegerDigits: 3
+    // }) + '-' + parseInt(codeCanton).toLocaleString('fr-FR', {
+    //   minimumIntegerDigits: 2
+    // });
     if (ref === code) {
       flag = true;
       datum = results[i];
@@ -199,12 +200,12 @@ function getMatchingResult(ref, tour) {
   return datum;
 }
 
-function pad(code) {
-  var ret = '';
-  for (var i=code.length; i<3; i++) {
-    ret=ret+'0';
+function pad(code, n) {
+  var padstr = code;
+  for (var i = n; i > code.length; i--) {
+    padstr = '0' + padstr;
   }
-  return ret+code;
+  return padstr;
 }
 
 d3.csv("data/Departementales_2015_Resultats_Tour1_par_canton.csv", function(error, data) {
@@ -268,8 +269,8 @@ function updateColor(feature, tour) {
 function d3DD(id, data) {
   var w = 300, //width
     h = 300, //height
-    r = 100;// Math.min(w, h) / 2; //radius
-    //color = d3.scale.category20c(); //builtin range of colors
+    r = 100; // Math.min(w, h) / 2; //radius
+  //color = d3.scale.category20c(); //builtin range of colors
 
   var vis = d3.select(id)
     .append("svg") //create the SVG element inside the <body>
@@ -277,7 +278,7 @@ function d3DD(id, data) {
     .attr("width", w) //set the width and height of our visualization (these will be attributes of the <svg> tag
     .attr("height", h)
     .append("g") //make a group to hold our pie chart
-    .attr("transform", "translate(" + 1.5*r + "," + 1.5*r + ")"); //move the center of the pie chart from 0, 0 to radius, radius
+    .attr("transform", "translate(" + 1.5 * r + "," + 1.5 * r + ")"); //move the center of the pie chart from 0, 0 to radius, radius
 
   var arc = d3.svg.arc() //this will create <path> elements for us using arc data
     .outerRadius(r);
@@ -302,8 +303,8 @@ function d3DD(id, data) {
   arcs.append("text") //add a label to each slice
     .attr("transform", function(d) { //set the label's origin to the center of the arc
       //we have to make sure to set these before calling arc.centroid
-      d.innerRadius = r+25;
-      d.outerRadius = r+30;
+      d.innerRadius = r + 25;
+      d.outerRadius = r + 30;
       return "translate(" + arc.centroid(d) + ")"; //this gives us a pair of coordinates like [50, 50]
     })
     .attr("text-anchor", "middle") //center the text on it's origin
@@ -366,7 +367,8 @@ var cantons = L.geoJson(null, {
           var ref = feature.properties.ref;
           var contentFirstRound = "<table class='table table-striped table-bordered table-condensed'>";
           var contentSecondRound = "<table class='table table-striped table-bordered table-condensed'>";
-          var pieDataFirst= [], pieDataSecond = [];
+          var pieDataFirst = [],
+            pieDataSecond = [];
           var dataum, stop, a, parti, row, contentResult, eluPremierTour = false;
           var datum = getMatchingResult(ref, firstRoundResults);
           if (datum) {
@@ -389,7 +391,7 @@ var cantons = L.geoJson(null, {
                 console.log('Sièges:' + datum['Sièges' + a]);
                 console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
                 console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
-                if( datum['% Voix/Exp' + a] > 51){
+                if (datum['% Voix/Exp' + a] > 51) {
                   eluPremierTour = true;
                 }
               }
@@ -402,40 +404,40 @@ var cantons = L.geoJson(null, {
           } else {
             console.log('canton non trouvé pour le premier tour ' + ref);
           }
-          if( !eluPremierTour) {
+          if (!eluPremierTour) {
 
 
-          datum = getMatchingResult(ref, secondRoundResults);
-          if (datum) {
-            stop = false;
-            for (a = 0; a < 3 && !stop; a++) {
-              if (datum['Nuance' + a] === '') {
-                stop = true;
-              } else {
-                parti = getParti(datum['Nuance' + a]);
+            datum = getMatchingResult(ref, secondRoundResults);
+            if (datum) {
+              stop = false;
+              for (a = 0; a < 3 && !stop; a++) {
+                if (datum['Nuance' + a] === '') {
+                  stop = true;
+                } else {
+                  parti = getParti(datum['Nuance' + a]);
 
-                contentSecondRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
-                row = {};
-                row.label = parti;
-                row.value = datum['% Voix/Exp' + a];
-                row.color = getCouleur(datum['Nuance' + a]);
-                pieDataSecond.push(row);
-                console.log('Nuance:' + datum['Nuance' + a]);
-                console.log('Binôme:' + datum['Binôme' + a]);
-                console.log('Voix:' + datum['Voix' + a]);
-                console.log('Sièges:' + datum['Sièges' + a]);
-                console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
-                console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
+                  contentSecondRound += "<tr><td><div class='legende " + datum['Nuance' + a] + "'></div><div>&nbsp;" + parti + "</div></td><td> " + datum['Binôme' + a] + "</td><td alagn='right'>" + datum['% Voix/Exp' + a] + "%</</td></tr>";
+                  row = {};
+                  row.label = parti;
+                  row.value = datum['% Voix/Exp' + a];
+                  row.color = getCouleur(datum['Nuance' + a]);
+                  pieDataSecond.push(row);
+                  console.log('Nuance:' + datum['Nuance' + a]);
+                  console.log('Binôme:' + datum['Binôme' + a]);
+                  console.log('Voix:' + datum['Voix' + a]);
+                  console.log('Sièges:' + datum['Sièges' + a]);
+                  console.log('% Voix/Ins:' + datum['% Voix/Ins' + a]);
+                  console.log('% Voix/Exp:' + datum['% Voix/Exp' + a]);
+                }
               }
+              contentSecondRound += "</table><br/><div id=\"pieSecondRound\" align=center></div>";
+
+              contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
+
+              contentSecondRound += contentResult;
+            } else {
+              console.log('canton non trouvé pour le second tour ' + ref);
             }
-            contentSecondRound += "</table><br/><div id=\"pieSecondRound\" align=center></div>";
-
-            contentResult = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Inscrits</th><td>" + datum['Inscrits'] + "</td></tr>" + "<tr><th>Participation</th><td>" + datum['Votants'] + " (" + datum['% Vot/Ins'] + "%) </td></tr>" + "</td></tr>" + "<tr><th>Abstention</th><td>" + datum['Abstentions'] + " (" + datum['% Abs/Ins'] + "%) </td></tr>" + "<tr><th>Exprimés</th><td>" + datum['Exprimés'] + " (" + datum['% Exp/Vot'] + "%) </td></tr>" + "<tr><th>Blancs</th><td>" + datum['Blancs'] + " (" + datum['% Blancs/Vot'] + "%) </td></tr>" + "<tr><th>Nuls</th><td>" + datum['Nuls'] + " (" + datum['% Nuls/Vot'] + "%) </td></tr>" + "<table>";
-
-            contentSecondRound += contentResult;
-          } else {
-            console.log('canton non trouvé pour le second tour ' + ref);
-          }
           } else {
             contentSecondRound = "Elus au premier tour";
           }
